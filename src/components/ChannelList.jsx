@@ -5,7 +5,8 @@ const PAGE_SIZE = 50;
 export default function ChannelList({
   channels,
   groups,
-  onCopyChannel
+  onCopyChannel,
+  onDeleteChannel
 }) {
   const [targetGroups, setTargetGroups] =
     useState({});
@@ -14,10 +15,14 @@ export default function ChannelList({
   const pageCount = Math.ceil(
     channels.length / PAGE_SIZE
   );
+  const currentPage = Math.min(
+    page,
+    Math.max(pageCount - 1, 0)
+  );
   const visibleChannels =
     channels.slice(
-      page * PAGE_SIZE,
-      (page + 1) * PAGE_SIZE
+      currentPage * PAGE_SIZE,
+      (currentPage + 1) * PAGE_SIZE
     );
 
   const selectTargetGroup = (
@@ -54,10 +59,10 @@ export default function ChannelList({
         Показано{" "}
         {channels.length === 0
           ? 0
-          : page * PAGE_SIZE + 1}
+          : currentPage * PAGE_SIZE + 1}
         -
         {Math.min(
-          (page + 1) * PAGE_SIZE,
+          (currentPage + 1) * PAGE_SIZE,
           channels.length
         )}{" "}
         из {channels.length}
@@ -140,6 +145,15 @@ export default function ChannelList({
               >
                 Копировать
               </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  onDeleteChannel(channel.id)
+                }
+              >
+                Удалить
+              </button>
             </div>
           </div>
         );
@@ -157,10 +171,10 @@ export default function ChannelList({
         >
           <button
             type="button"
-            disabled={page === 0}
+            disabled={currentPage === 0}
             onClick={() =>
               setPage(current =>
-                current - 1
+                Math.max(current - 1, 0)
               )
             }
           >
@@ -168,18 +182,19 @@ export default function ChannelList({
           </button>
 
           <span>
-            Страница {page + 1} из{" "}
+            Страница {currentPage + 1} из{" "}
             {pageCount}
           </span>
 
           <button
             type="button"
             disabled={
-              page === pageCount - 1
+              currentPage ===
+              pageCount - 1
             }
             onClick={() =>
-              setPage(current =>
-                current + 1
+              setPage(
+                currentPage + 1
               )
             }
           >

@@ -8,7 +8,8 @@ import ChannelList from "./ChannelList";
 
 export default function PlaylistView({
   channels,
-  onCopyChannel
+  onCopyChannel,
+  onDeleteChannel
 }) {
   const {
     groups,
@@ -95,6 +96,7 @@ export default function PlaylistView({
           channels={filteredChannels}
           groups={groups}
           onCopyChannel={onCopyChannel}
+          onDeleteChannel={onDeleteChannel}
         />
       </div>
     </div>

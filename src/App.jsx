@@ -51,6 +51,16 @@ function App() {
     });
   };
 
+  const handleDeleteChannel = (
+    channelId
+  ) => {
+    setChannels(currentChannels =>
+      currentChannels.filter(
+        item => item.id !== channelId
+      )
+    );
+  };
+
   const handleSave = () => {
     const content = unparseM3U(channels);
     const blob = new Blob(
@@ -94,6 +104,9 @@ function App() {
             channels={channels}
             onCopyChannel={
               handleCopyChannel
+            }
+            onDeleteChannel={
+              handleDeleteChannel
             }
           />
         </>
