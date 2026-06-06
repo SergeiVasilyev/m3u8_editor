@@ -123,7 +123,21 @@ export default function ChannelList({
             }}
           >
             <strong>
-              {channel.name}
+              <a
+                href={`?stream=${encodeURIComponent(
+                  channel.url
+                )}&name=${encodeURIComponent(
+                  channel.name
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Открыть видео в новой вкладке"
+                style={{
+                  color: "inherit"
+                }}
+              >
+                {channel.name}
+              </a>
             </strong>
 
             {copiedChannelId ===

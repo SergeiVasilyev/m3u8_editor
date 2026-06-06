@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import FileLoader from "./components/FileLoader";
 import PlaylistView from "./components/PlaylistView";
+import VideoPlayer from "./components/VideoPlayer";
 
 import {
   parseM3U,
@@ -9,6 +10,14 @@ import {
 } from "./parser/m3u_parser";
 
 function App() {
+  const searchParams = new URLSearchParams(
+    window.location.search
+  );
+  const streamUrl =
+    searchParams.get("stream");
+  const streamName =
+    searchParams.get("name");
+
   const [channels, setChannels] =
     useState([]);
   const [groups, setGroups] =
@@ -139,6 +148,15 @@ function App() {
     link.click();
     URL.revokeObjectURL(url);
   };
+
+  if (streamUrl) {
+    return (
+      <VideoPlayer
+        name={streamName}
+        url={streamUrl}
+      />
+    );
+  }
 
   return (
     <div style={{ padding: "20px" }}>
