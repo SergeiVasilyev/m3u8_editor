@@ -11,6 +11,8 @@ import {
 function App() {
   const [channels, setChannels] =
     useState([]);
+  const [groups, setGroups] =
+    useState([]);
   const [fileName, setFileName] =
     useState("playlist.m3u8");
 
@@ -18,9 +20,27 @@ function App() {
     content,
     loadedFileName
   ) => {
-    setChannels(parseM3U(content));
+    const loadedChannels =
+      parseM3U(content);
+
+    setChannels(loadedChannels);
+    setGroups([
+      ...new Set(
+        loadedChannels.map(
+          channel => channel.group || ""
+        )
+      )
+    ]);
     setFileName(
       loadedFileName || "playlist.m3u8"
+    );
+  };
+
+  const handleCreateGroup = groupName => {
+    setGroups(currentGroups =>
+      currentGroups.includes(groupName)
+        ? currentGroups
+        : [...currentGroups, groupName]
     );
   };
 
@@ -118,6 +138,10 @@ function App() {
 
           <PlaylistView
             channels={channels}
+            groups={groups}
+            onCreateGroup={
+              handleCreateGroup
+            }
             onCopyChannel={
               handleCopyChannel
             }

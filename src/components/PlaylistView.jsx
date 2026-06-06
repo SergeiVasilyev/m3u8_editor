@@ -8,16 +8,21 @@ import ChannelList from "./ChannelList";
 
 export default function PlaylistView({
   channels,
+  groups,
+  onCreateGroup,
   onCopyChannel,
   onMoveChannel,
   onDeleteChannel
 }) {
   const {
-    groups,
     channelsByGroup,
     groupCounts
   } = useMemo(() => {
     const groupedChannels = new Map();
+
+    for (const group of groups) {
+      groupedChannels.set(group, []);
+    }
 
     for (const channel of channels) {
       const group = channel.group || "";
@@ -32,9 +37,6 @@ export default function PlaylistView({
     }
 
     return {
-      groups: [
-        ...groupedChannels.keys()
-      ],
       channelsByGroup:
         groupedChannels,
       groupCounts: new Map(
@@ -46,7 +48,7 @@ export default function PlaylistView({
         )
       )
     };
-  }, [channels]);
+  }, [channels, groups]);
 
   const [selectedGroup, setSelectedGroup] =
     useState(groups[0] || "");
@@ -59,6 +61,22 @@ export default function PlaylistView({
   const filteredChannels =
     channelsByGroup.get(activeGroup) ||
     [];
+
+  const handleCreateGroup = groupName => {
+    const normalizedName =
+      groupName.trim();
+
+    if (
+      !normalizedName ||
+      groups.includes(normalizedName)
+    ) {
+      return false;
+    }
+
+    onCreateGroup(normalizedName);
+    setSelectedGroup(normalizedName);
+    return true;
+  };
 
   return (
     <div
@@ -80,6 +98,9 @@ export default function PlaylistView({
           groups={groups}
           groupCounts={groupCounts}
           selectedGroup={activeGroup}
+          onCreateGroup={
+            handleCreateGroup
+          }
           onSelectGroup={
             setSelectedGroup
           }
