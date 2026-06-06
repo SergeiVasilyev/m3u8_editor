@@ -44,6 +44,30 @@ function App() {
     );
   };
 
+  const handleRenameGroup = (
+    currentName,
+    newName
+  ) => {
+    setGroups(currentGroups =>
+      currentGroups.map(group =>
+        group === currentName
+          ? newName
+          : group
+      )
+    );
+    setChannels(currentChannels =>
+      currentChannels.map(channel =>
+        (channel.group || "") ===
+        currentName
+          ? {
+              ...channel,
+              group: newName
+            }
+          : channel
+      )
+    );
+  };
+
   const handleCopyChannel = (
     channelId,
     targetGroup
@@ -141,6 +165,9 @@ function App() {
             groups={groups}
             onCreateGroup={
               handleCreateGroup
+            }
+            onRenameGroup={
+              handleRenameGroup
             }
             onCopyChannel={
               handleCopyChannel

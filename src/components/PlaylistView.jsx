@@ -10,6 +10,7 @@ export default function PlaylistView({
   channels,
   groups,
   onCreateGroup,
+  onRenameGroup,
   onCopyChannel,
   onMoveChannel,
   onDeleteChannel
@@ -78,12 +79,35 @@ export default function PlaylistView({
     return true;
   };
 
+  const handleRenameGroup = (
+    currentName,
+    newName
+  ) => {
+    const normalizedName =
+      newName.trim();
+
+    if (
+      !normalizedName ||
+      normalizedName === currentName ||
+      groups.includes(normalizedName)
+    ) {
+      return false;
+    }
+
+    onRenameGroup(
+      currentName,
+      normalizedName
+    );
+    setSelectedGroup(normalizedName);
+    return true;
+  };
+
   return (
     <div
       style={{
         display: "grid",
         gridTemplateColumns:
-          "250px 1fr",
+          "1fr 3fr",
         gap: "20px",
         marginTop: "20px"
       }}
@@ -100,6 +124,9 @@ export default function PlaylistView({
           selectedGroup={activeGroup}
           onCreateGroup={
             handleCreateGroup
+          }
+          onRenameGroup={
+            handleRenameGroup
           }
           onSelectGroup={
             setSelectedGroup
