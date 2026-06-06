@@ -12,6 +12,10 @@ export default function ChannelList({
   const [targetGroups, setTargetGroups] =
     useState({});
   const [page, setPage] = useState(0);
+  const [
+    copiedChannelId,
+    setCopiedChannelId
+  ] = useState(null);
 
   const pageCount = Math.ceil(
     channels.length / PAGE_SIZE
@@ -60,6 +64,25 @@ export default function ChannelList({
     );
   };
 
+  const copyUrl = async channel => {
+    try {
+      await navigator.clipboard.writeText(
+        channel.url
+      );
+      setCopiedChannelId(channel.id);
+
+      window.setTimeout(() => {
+        setCopiedChannelId(current =>
+          current === channel.id
+            ? null
+            : current
+        );
+      }, 2000);
+    } catch {
+      setCopiedChannelId(null);
+    }
+  };
+
   return (
     <div>
       <h3>Каналы</h3>
@@ -103,13 +126,43 @@ export default function ChannelList({
               {channel.name}
             </strong>
 
+            {copiedChannelId ===
+              channel.id && (
+              <span
+                role="status"
+                style={{
+                  marginLeft: "8px",
+                  fontSize: "12px"
+                }}
+              >
+                Скопировано
+              </span>
+            )}
+
             <div
               style={{
                 fontSize: "12px",
-                color: "#666"
+                marginTop: "2px"
               }}
             >
-              {channel.url}
+              <button
+                type="button"
+                title="Копировать ссылку канала"
+                onClick={() =>
+                  copyUrl(channel)
+                }
+                style={{
+                  padding: 0,
+                  border: 0,
+                  background: "transparent",
+                  color: "#666",
+                  font: "inherit",
+                  textDecoration: "underline",
+                  cursor: "pointer"
+                }}
+              >
+                {channel.url}
+              </button>
             </div>
 
             <div
