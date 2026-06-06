@@ -15,7 +15,8 @@ export default function PlaylistView({
   onCopyChannel,
   onMoveChannel,
   onReorderChannel,
-  onDeleteChannel
+  onDeleteChannel,
+  onDeleteGroup
 }) {
   const {
     channelsByGroup,
@@ -83,6 +84,12 @@ export default function PlaylistView({
     return true;
   };
 
+  // Удалить группу
+  const handleDeleteGroup = groupName => {
+    onDeleteGroup(groupName);
+    setSelectedGroup(groups[0] || "");
+  };
+
   // Проверяет новое имя, переименовывает группу и сохраняет её выбранной.
   const handleRenameGroup = (
     currentName,
@@ -135,6 +142,9 @@ export default function PlaylistView({
           }
           onSelectGroup={
             setSelectedGroup
+          }
+          onDeleteGroup={
+            handleDeleteGroup
           }
         />
       </div>

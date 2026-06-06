@@ -7,7 +7,8 @@ export default function GroupList({
   selectedGroup,
   onCreateGroup,
   onRenameGroup,
-  onSelectGroup
+  onSelectGroup,
+  onDeleteGroup
 }) {
   const [groupName, setGroupName] =
     useState("");
@@ -26,6 +27,14 @@ export default function GroupList({
 
     if (onCreateGroup(groupName)) {
       setGroupName("");
+    }
+  };
+
+  const deleteGroup = group => {
+    if (onDeleteGroup(group)) {
+      if (group === selectedGroup) {
+        onSelectGroup(null);
+      }
     }
   };
 
@@ -206,6 +215,43 @@ export default function GroupList({
                   >
                     <path d="M12 20h9" />
                     <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  aria-label={
+                    `Удалить группу ${group}`
+                  }
+                  title="Удалить"
+                  onClick={event => {
+                    event.stopPropagation();
+                    deleteGroup(group);
+                  }}
+                  style={{
+                    width: "28px",
+                    height: "28px",
+                    padding: "5px",
+                    flexShrink: 0,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    aria-hidden="true"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3 6h18" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    <line x1="10" y1="11" x2="10" y2="17" />
+                    <line x1="14" y1="11" x2="14" y2="17" />
                   </svg>
                 </button>
               </div>

@@ -204,6 +204,20 @@ function App() {
     );
   };
 
+  // Удалить группу из плейлиста.
+  const handleDeleteGroup = group => {
+    setGroups(currentGroups =>
+      currentGroups.filter(
+        item => item !== group
+      )
+    );
+    setChannels(currentChannels =>
+      currentChannels.filter(
+        channel => channel.group !== group
+      )
+    );
+  };
+
   // Сериализует текущий плейлист и скачивает его как M3U8-файл.
   const handleSave = () => {
     const content = unparseM3U(channels);
@@ -273,6 +287,9 @@ function App() {
             }
             onDeleteChannel={
               handleDeleteChannel
+            }
+            onDeleteGroup={
+              handleDeleteGroup
             }
           />
         </>
