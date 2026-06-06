@@ -1,5 +1,6 @@
 import { createChannel } from "../models/channel";
 
+// Преобразует текст M3U/M3U8 в массив объектов каналов.
 export function parseM3U(text) {
     const lines = text.split(/\r?\n/);
 
@@ -43,6 +44,7 @@ export function parseM3U(text) {
     return channels;
 }
 
+// Преобразует текущий массив каналов обратно в текст формата M3U8.
 export function unparseM3U(channels) {
     const lines = ["#EXTM3U"];
 

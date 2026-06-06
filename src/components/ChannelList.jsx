@@ -2,6 +2,7 @@ import { useState } from "react";
 
 const PAGE_SIZE = 50;
 
+// Отображает каналы группы и действия над ними с постраничной навигацией.
 export default function ChannelList({
   channels,
   groups,
@@ -39,6 +40,7 @@ export default function ChannelList({
       (currentPage + 1) * PAGE_SIZE
     );
 
+  // Запоминает целевую группу для выбранного канала.
   const selectTargetGroup = (
     channelId,
     group
@@ -49,6 +51,7 @@ export default function ChannelList({
     }));
   };
 
+  // Копирует канал в выбранную целевую группу.
   const copyChannel = channel => {
     const targetGroup =
       targetGroups[channel.id];
@@ -61,6 +64,7 @@ export default function ChannelList({
     );
   };
 
+  // Перемещает канал в выбранную целевую группу.
   const moveChannel = channel => {
     const targetGroup =
       targetGroups[channel.id];
@@ -73,6 +77,7 @@ export default function ChannelList({
     );
   };
 
+  // Копирует URL канала в буфер и временно показывает подтверждение.
   const copyUrl = async channel => {
     try {
       await navigator.clipboard.writeText(
@@ -92,6 +97,7 @@ export default function ChannelList({
     }
   };
 
+  // Начинает перетаскивание канала и сохраняет его идентификатор.
   const startDragging = (
     event,
     channelId
@@ -105,6 +111,7 @@ export default function ChannelList({
     );
   };
 
+  // Завершает перетаскивание и передаёт новый порядок в приложение.
   const dropChannel = (
     event,
     targetId

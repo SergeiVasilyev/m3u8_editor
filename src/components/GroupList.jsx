@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+// Отображает группы и предоставляет создание, выбор и переименование.
 export default function GroupList({
   groups,
   groupCounts,
@@ -19,6 +20,7 @@ export default function GroupList({
     setEditingName
   ] = useState("");
 
+  // Отправляет введённое имя для создания новой группы.
   const createGroup = event => {
     event.preventDefault();
 
@@ -27,16 +29,19 @@ export default function GroupList({
     }
   };
 
+  // Включает режим редактирования выбранной группы.
   const startEditing = group => {
     setEditingGroup(group);
     setEditingName(group);
   };
 
+  // Закрывает форму переименования без сохранения.
   const cancelEditing = () => {
     setEditingGroup(null);
     setEditingName("");
   };
 
+  // Сохраняет новое имя группы, если оно прошло проверку.
   const renameGroup = event => {
     event.preventDefault();
 

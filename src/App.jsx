@@ -9,6 +9,7 @@ import {
   unparseM3U
 } from "./parser/m3u_parser";
 
+// Управляет плейлистом и переключает редактор в режим видеоплеера.
 function App() {
   const searchParams = new URLSearchParams(
     window.location.search
@@ -25,6 +26,7 @@ function App() {
   const [fileName, setFileName] =
     useState("playlist.m3u8");
 
+  // Разбирает загруженный файл и сохраняет его каналы, группы и имя.
   const handleLoad = (
     content,
     loadedFileName
@@ -45,6 +47,7 @@ function App() {
     );
   };
 
+  // Добавляет новую группу, если группы с таким именем ещё нет.
   const handleCreateGroup = groupName => {
     setGroups(currentGroups =>
       currentGroups.includes(groupName)
@@ -53,6 +56,7 @@ function App() {
     );
   };
 
+  // Переименовывает группу и обновляет имя группы у всех её каналов.
   const handleRenameGroup = (
     currentName,
     newName
@@ -77,6 +81,7 @@ function App() {
     );
   };
 
+  // Создаёт копию канала в выбранной группе с новым идентификатором.
   const handleCopyChannel = (
     channelId,
     targetGroup
@@ -104,6 +109,7 @@ function App() {
     });
   };
 
+  // Перемещает существующий канал в другую группу.
   const handleMoveChannel = (
     channelId,
     targetGroup
@@ -120,6 +126,7 @@ function App() {
     );
   };
 
+  // Меняет порядок двух позиций каналов внутри одной группы.
   const handleReorderChannel = (
     sourceId,
     targetId
@@ -186,6 +193,7 @@ function App() {
     });
   };
 
+  // Удаляет канал из плейлиста по его идентификатору.
   const handleDeleteChannel = (
     channelId
   ) => {
@@ -196,6 +204,7 @@ function App() {
     );
   };
 
+  // Сериализует текущий плейлист и скачивает его как M3U8-файл.
   const handleSave = () => {
     const content = unparseM3U(channels);
     const blob = new Blob(

@@ -6,6 +6,7 @@ import {
 import GroupList from "./GroupList";
 import ChannelList from "./ChannelList";
 
+// Связывает список групп с каналами выбранной группы.
 export default function PlaylistView({
   channels,
   groups,
@@ -20,6 +21,7 @@ export default function PlaylistView({
     channelsByGroup,
     groupCounts
   } = useMemo(() => {
+    // Строит индекс каналов и счётчики один раз при изменении плейлиста.
     const groupedChannels = new Map();
 
     for (const group of groups) {
@@ -64,6 +66,7 @@ export default function PlaylistView({
     channelsByGroup.get(activeGroup) ||
     [];
 
+  // Проверяет имя, создаёт группу и сразу выбирает её.
   const handleCreateGroup = groupName => {
     const normalizedName =
       groupName.trim();
@@ -80,6 +83,7 @@ export default function PlaylistView({
     return true;
   };
 
+  // Проверяет новое имя, переименовывает группу и сохраняет её выбранной.
   const handleRenameGroup = (
     currentName,
     newName

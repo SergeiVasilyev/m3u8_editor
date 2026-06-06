@@ -4,6 +4,7 @@ import {
   useState
 } from "react";
 
+// Воспроизводит HLS-поток нативно или через динамически загруженный hls.js.
 export default function VideoPlayer({
   name,
   url
@@ -12,6 +13,7 @@ export default function VideoPlayer({
   const [error, setError] = useState("");
 
   useEffect(() => {
+    // Подключает поток к video и освобождает HLS-ресурсы при закрытии.
     const video = videoRef.current;
 
     if (!video || !url) return undefined;
