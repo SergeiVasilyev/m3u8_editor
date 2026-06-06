@@ -51,6 +51,22 @@ function App() {
     });
   };
 
+  const handleMoveChannel = (
+    channelId,
+    targetGroup
+  ) => {
+    setChannels(currentChannels =>
+      currentChannels.map(channel =>
+        channel.id === channelId
+          ? {
+              ...channel,
+              group: targetGroup
+            }
+          : channel
+      )
+    );
+  };
+
   const handleDeleteChannel = (
     channelId
   ) => {
@@ -104,6 +120,9 @@ function App() {
             channels={channels}
             onCopyChannel={
               handleCopyChannel
+            }
+            onMoveChannel={
+              handleMoveChannel
             }
             onDeleteChannel={
               handleDeleteChannel

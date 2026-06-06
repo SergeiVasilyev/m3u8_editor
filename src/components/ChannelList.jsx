@@ -6,6 +6,7 @@ export default function ChannelList({
   channels,
   groups,
   onCopyChannel,
+  onMoveChannel,
   onDeleteChannel
 }) {
   const [targetGroups, setTargetGroups] =
@@ -42,6 +43,18 @@ export default function ChannelList({
     if (!targetGroup) return;
 
     onCopyChannel(
+      channel.id,
+      targetGroup
+    );
+  };
+
+  const moveChannel = channel => {
+    const targetGroup =
+      targetGroups[channel.id];
+
+    if (!targetGroup) return;
+
+    onMoveChannel(
       channel.id,
       targetGroup
     );
@@ -135,6 +148,16 @@ export default function ChannelList({
                   )
                 )}
               </select>
+
+              <button
+                type="button"
+                onClick={() =>
+                  moveChannel(channel)
+                }
+                disabled={!targetGroup}
+              >
+                Переместить
+              </button>
 
               <button
                 type="button"
