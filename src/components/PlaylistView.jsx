@@ -13,6 +13,7 @@ export default function PlaylistView({
   onRenameGroup,
   onCopyChannel,
   onMoveChannel,
+  onReorderChannel,
   onDeleteChannel
 }) {
   const {
@@ -146,6 +147,9 @@ export default function PlaylistView({
           groups={groups}
           onCopyChannel={onCopyChannel}
           onMoveChannel={onMoveChannel}
+          onReorderChannel={
+            onReorderChannel
+          }
           onDeleteChannel={onDeleteChannel}
         />
       </div>

@@ -120,6 +120,72 @@ function App() {
     );
   };
 
+  const handleReorderChannel = (
+    sourceId,
+    targetId
+  ) => {
+    if (sourceId === targetId) return;
+
+    setChannels(currentChannels => {
+      const sourceChannel =
+        currentChannels.find(
+          channel =>
+            channel.id === sourceId
+        );
+      const targetChannel =
+        currentChannels.find(
+          channel =>
+            channel.id === targetId
+        );
+
+      if (
+        !sourceChannel ||
+        !targetChannel ||
+        sourceChannel.group !==
+          targetChannel.group
+      ) {
+        return currentChannels;
+      }
+
+      const groupChannels =
+        currentChannels.filter(
+          channel =>
+            channel.group ===
+            sourceChannel.group
+        );
+      const sourceIndex =
+        groupChannels.findIndex(
+          channel =>
+            channel.id === sourceId
+        );
+      const targetIndex =
+        groupChannels.findIndex(
+          channel =>
+            channel.id === targetId
+        );
+      const [movedChannel] =
+        groupChannels.splice(
+          sourceIndex,
+          1
+        );
+
+      groupChannels.splice(
+        targetIndex,
+        0,
+        movedChannel
+      );
+
+      let groupIndex = 0;
+
+      return currentChannels.map(channel =>
+        channel.group ===
+        sourceChannel.group
+          ? groupChannels[groupIndex++]
+          : channel
+      );
+    });
+  };
+
   const handleDeleteChannel = (
     channelId
   ) => {
@@ -192,6 +258,9 @@ function App() {
             }
             onMoveChannel={
               handleMoveChannel
+            }
+            onReorderChannel={
+              handleReorderChannel
             }
             onDeleteChannel={
               handleDeleteChannel

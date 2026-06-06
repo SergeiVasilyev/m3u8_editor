@@ -7,6 +7,7 @@ export default function ChannelList({
   groups,
   onCopyChannel,
   onMoveChannel,
+  onReorderChannel,
   onDeleteChannel
 }) {
   const [targetGroups, setTargetGroups] =
@@ -15,6 +16,14 @@ export default function ChannelList({
   const [
     copiedChannelId,
     setCopiedChannelId
+  ] = useState(null);
+  const [
+    draggedChannelId,
+    setDraggedChannelId
+  ] = useState(null);
+  const [
+    dragTargetId,
+    setDragTargetId
   ] = useState(null);
 
   const pageCount = Math.ceil(
@@ -83,6 +92,42 @@ export default function ChannelList({
     }
   };
 
+  const startDragging = (
+    event,
+    channelId
+  ) => {
+    setDraggedChannelId(channelId);
+    event.dataTransfer.effectAllowed =
+      "move";
+    event.dataTransfer.setData(
+      "text/plain",
+      channelId
+    );
+  };
+
+  const dropChannel = (
+    event,
+    targetId
+  ) => {
+    event.preventDefault();
+
+    const sourceId =
+      draggedChannelId ||
+      event.dataTransfer.getData(
+        "text/plain"
+      );
+
+    if (sourceId) {
+      onReorderChannel(
+        sourceId,
+        targetId
+      );
+    }
+
+    setDraggedChannelId(null);
+    setDragTargetId(null);
+  };
+
   return (
     <div>
       <h3>Каналы</h3>
@@ -116,10 +161,50 @@ export default function ChannelList({
         return (
           <div
             key={channel.id}
+            draggable
+            onDragStart={event =>
+              startDragging(
+                event,
+                channel.id
+              )
+            }
+            onDragOver={event => {
+              event.preventDefault();
+              event.dataTransfer.dropEffect =
+                "move";
+              setDragTargetId(channel.id);
+            }}
+            onDragLeave={() =>
+              setDragTargetId(current =>
+                current === channel.id
+                  ? null
+                  : current
+              )
+            }
+            onDrop={event =>
+              dropChannel(
+                event,
+                channel.id
+              )
+            }
+            onDragEnd={() => {
+              setDraggedChannelId(null);
+              setDragTargetId(null);
+            }}
             style={{
               padding: "8px",
               borderBottom:
-                "1px solid #ddd"
+                "1px solid #ddd",
+              borderTop:
+                dragTargetId === channel.id
+                  ? "2px solid #3b82f6"
+                  : "2px solid transparent",
+              opacity:
+                draggedChannelId ===
+                channel.id
+                  ? 0.5
+                  : 1,
+              cursor: "grab"
             }}
           >
             <strong>
