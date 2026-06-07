@@ -267,7 +267,8 @@ export default function ChannelList({
                   cursor: "pointer"
                 }}
               >
-                {channel.url} - {(groups.find(g => g.id === channel.groupId)?.name || 'Без группы')}
+                {channel.url}
+                {/* - {(groups.find(g => g.id === channel.groupId)?.name || 'Без группы')} */}
               </button>
             </div>
 
