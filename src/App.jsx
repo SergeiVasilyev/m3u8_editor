@@ -245,7 +245,7 @@ function App() {
 
   // Сериализует текущий плейлист и скачивает его как M3U8-файл.
   const handleSave = () => {
-    const content = unparseM3U(channels);
+    const content = unparseM3U(channels, groups);
     const blob = new Blob(
       [content],
       {

@@ -61,14 +61,36 @@ export function parseM3U(text) {
 }
 
 // Преобразует текущий массив каналов обратно в текст формата M3U8.
-export function unparseM3U(channels) {
+export function unparseM3U(channels, groups = []) {
     const lines = ["#EXTM3U"];
 
-    for (const channel of channels) {
-        const extinf =
-            channel.extinf ||
-            `#EXTINF:0,${channel.name || ""}`;
+    // Map groups by id for quick lookup
+    const groupMap = new Map((groups || []).map(g => [g.id, g]));
 
+    // Emit channels grouped by the order of `groups` array so group order is preserved
+    for (const group of groups || []) {
+        const groupChannels = channels.filter(c => c.groupId === group.id);
+        if (groupChannels.length === 0) continue;
+
+        for (const channel of groupChannels) {
+            const extinf = channel.extinf || `#EXTINF:0,${channel.name || ""}`;
+            lines.push(extinf);
+
+            // Prefer group.name from the groups list (reflects renames / ordering)
+            if (group && group.name) {
+                lines.push(`#EXTGRP:${group.name}`);
+            } else if (channel.group) {
+                lines.push(`#EXTGRP:${channel.group}`);
+            }
+
+            lines.push(channel.url);
+        }
+    }
+
+    // Emit channels that don't belong to any known group (preserve their relative order)
+    const remaining = channels.filter(c => !groupMap.has(c.groupId));
+    for (const channel of remaining) {
+        const extinf = channel.extinf || `#EXTINF:0,${channel.name || ""}`;
         lines.push(extinf);
 
         if (channel.group) {
