@@ -5,7 +5,8 @@ export function createChannel({
     name,
     url,    
     group,
-    extinf
+    extinf,
+    groupId
 }) {
   return {
     id,
@@ -13,6 +14,7 @@ export function createChannel({
     name,
     url,
     group,
-    extinf
+    extinf,
+    groupId
   };
 }

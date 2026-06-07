@@ -1,6 +1,7 @@
 import {
   useMemo,
-  useState
+  useState,
+  useEffect
 } from "react";
 
 import GroupList from "./GroupList";
@@ -22,32 +23,28 @@ export default function PlaylistView({
     channelsByGroup,
     groupCounts
   } = useMemo(() => {
-    // Строит индекс каналов и счётчики один раз при изменении плейлиста.
     const groupedChannels = new Map();
 
     for (const group of groups) {
-      groupedChannels.set(group, []);
+      groupedChannels.set(group.id, []);
     }
 
     for (const channel of channels) {
-      const group = channel.group || "";
+      const groupId = channel.groupId;
 
-      if (!groupedChannels.has(group)) {
-        groupedChannels.set(group, []);
+      if (!groupedChannels.has(groupId)) {
+        groupedChannels.set(groupId, []);
       }
 
-      groupedChannels
-        .get(group)
-        .push(channel);
+      groupedChannels.get(groupId).push(channel);
     }
 
     return {
-      channelsByGroup:
-        groupedChannels,
+      channelsByGroup: groupedChannels,
       groupCounts: new Map(
         [...groupedChannels].map(
-          ([group, groupChannels]) => [
-            group,
+          ([groupId, groupChannels]) => [
+            groupId,
             groupChannels.length
           ]
         )
@@ -56,61 +53,71 @@ export default function PlaylistView({
   }, [channels, groups]);
 
   const [selectedGroup, setSelectedGroup] =
-    useState(groups[0] || "");
+    useState(groups[0] || null);
+
+  useEffect(() => {
+    if (groups.length > 0 && !selectedGroup) {
+      setSelectedGroup(groups[0]);
+    }
+  }, [groups, selectedGroup]);
 
   const activeGroup =
-    channelsByGroup.has(selectedGroup)
+    selectedGroup &&
+    channelsByGroup.has(selectedGroup.id)
       ? selectedGroup
-      : groups[0] || "";
+      : groups[0] || null;
 
   const filteredChannels =
-    channelsByGroup.get(activeGroup) ||
-    [];
+    channelsByGroup.get(activeGroup?.id) || [];
 
-  // Проверяет имя, создаёт группу и сразу выбирает её.
   const handleCreateGroup = groupName => {
-    const normalizedName =
-      groupName.trim();
+    const normalizedName = groupName.trim();
 
     if (
       !normalizedName ||
-      groups.includes(normalizedName)
+      groups.some(
+        group => group.name === normalizedName
+      )
     ) {
       return false;
     }
 
     onCreateGroup(normalizedName);
-    setSelectedGroup(normalizedName);
     return true;
   };
 
-  // Удалить группу
-  const handleDeleteGroup = groupName => {
-    onDeleteGroup(groupName);
-    setSelectedGroup(groups[0] || "");
+  const handleDeleteGroup = group => {
+    onDeleteGroup(group);
+
+    setSelectedGroup(
+      groups.find(g => g.id !== group.id) ||
+      null
+    );
   };
 
-  // Проверяет новое имя, переименовывает группу и сохраняет её выбранной.
   const handleRenameGroup = (
-    currentName,
+    currentGroup,
     newName
   ) => {
-    const normalizedName =
-      newName.trim();
+    const normalizedName = newName.trim();
 
     if (
       !normalizedName ||
-      normalizedName === currentName ||
-      groups.includes(normalizedName)
+      normalizedName === currentGroup.name ||
+      groups.some(
+        group =>
+          group.name === normalizedName &&
+          group.id !== currentGroup.id
+      )
     ) {
       return false;
     }
 
     onRenameGroup(
-      currentName,
+      currentGroup.id,
       normalizedName
     );
-    setSelectedGroup(normalizedName);
+
     return true;
   };
 
@@ -118,8 +125,7 @@ export default function PlaylistView({
     <div
       style={{
         display: "grid",
-        gridTemplateColumns:
-          "1fr 3fr",
+        gridTemplateColumns: "1fr 3fr",
         gap: "20px",
         marginTop: "20px"
       }}
@@ -134,18 +140,10 @@ export default function PlaylistView({
           groups={groups}
           groupCounts={groupCounts}
           selectedGroup={activeGroup}
-          onCreateGroup={
-            handleCreateGroup
-          }
-          onRenameGroup={
-            handleRenameGroup
-          }
-          onSelectGroup={
-            setSelectedGroup
-          }
-          onDeleteGroup={
-            handleDeleteGroup
-          }
+          onCreateGroup={handleCreateGroup}
+          onRenameGroup={handleRenameGroup}
+          onSelectGroup={setSelectedGroup}
+          onDeleteGroup={handleDeleteGroup}
         />
       </div>
 
@@ -156,14 +154,12 @@ export default function PlaylistView({
         }}
       >
         <ChannelList
-          key={activeGroup}
+          key={activeGroup?.id}
           channels={filteredChannels}
           groups={groups}
           onCopyChannel={onCopyChannel}
           onMoveChannel={onMoveChannel}
-          onReorderChannel={
-            onReorderChannel
-          }
+          onReorderChannel={onReorderChannel}
           onDeleteChannel={onDeleteChannel}
         />
       </div>

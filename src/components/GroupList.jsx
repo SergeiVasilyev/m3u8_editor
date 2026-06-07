@@ -41,7 +41,7 @@ export default function GroupList({
   // Включает режим редактирования выбранной группы.
   const startEditing = group => {
     setEditingGroup(group);
-    setEditingName(group);
+    setEditingName(group.name);
   };
 
   // Закрывает форму переименования без сохранения.
@@ -103,11 +103,11 @@ export default function GroupList({
 
       {groups.map(group => {
         const isEditing =
-          editingGroup === group;
+          editingGroup?.id === group.id;
 
         return (
           <div
-            key={group}
+            key={group.id}
             onClick={() =>
               onSelectGroup(group)
             }
@@ -117,7 +117,7 @@ export default function GroupList({
               borderRadius: "4px",
               marginBottom: "4px",
               background:
-                selectedGroup === group
+                selectedGroup?.id === group.id
                   ? "#dbeafe"
                   : "transparent"
             }}
@@ -138,7 +138,7 @@ export default function GroupList({
                   type="text"
                   value={editingName}
                   aria-label={
-                    `Новое название группы ${group}`
+                    `Новое название группы ${group.name}`
                   }
                   onChange={event =>
                     setEditingName(
@@ -175,9 +175,9 @@ export default function GroupList({
                 }}
               >
                 <span>
-                  {group || "Без группы"}{" "}
+                  {group.name || "Без группы"}{" "}
                   (
-                  {groupCounts.get(group) ||
+                  {groupCounts.get(group.id) ||
                     0}
                   )
                 </span>
@@ -190,7 +190,7 @@ export default function GroupList({
                   <button
                     type="button"
                     aria-label={
-                      `Редактировать группу ${group}`
+                      `Редактировать группу ${group.name}`
                     }
                     title="Редактировать"
                     onClick={event => {
@@ -225,7 +225,7 @@ export default function GroupList({
                   <button
                     type="button"
                     aria-label={
-                      `Удалить группу ${group}`
+                      `Удалить группу ${group.name}`
                     }
                     title="Удалить"
                     onClick={event => {

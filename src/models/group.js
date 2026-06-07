@@ -2,11 +2,11 @@
 export function createGroup({
   id,
   name,
-  parentId = null
+  // parentId = null
 }) {
   return {
     id,
     name,
-    parentId
+    // parentId
   };
 }

@@ -1,9 +1,11 @@
 import { createChannel } from "../models/channel";
+import { createGroup } from "../models/group";
 
 // Преобразует текст M3U/M3U8 в массив объектов каналов.
 export function parseM3U(text) {
     const lines = text.split(/\r?\n/);
 
+    const groups = [];
     const channels = [];
     let currentExtinf = null;
     let currentGroup = null;
@@ -27,13 +29,27 @@ export function parseM3U(text) {
         const name =
         currentExtinf?.split(",").pop() || "";
 
+        let group = groups.find(
+            g => g.name === currentGroup
+            );
+
+            if (!group) {
+            group = createGroup({
+                id: crypto.randomUUID(),
+                name: currentGroup
+            });
+
+            groups.push(group);
+        }
+
         channels.push(
         createChannel({
             id: crypto.randomUUID(),
             name,
             url: line,
             group: currentGroup,
-            extinf: currentExtinf
+            extinf: currentExtinf,
+            groupId: group.id
         })
         );
 
@@ -41,7 +57,7 @@ export function parseM3U(text) {
         currentGroup = null;
     }
 
-    return channels;
+    return { channels, groups };
 }
 
 // Преобразует текущий массив каналов обратно в текст формата M3U8.

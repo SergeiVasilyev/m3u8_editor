@@ -160,7 +160,7 @@ export default function ChannelList({
         const availableGroups =
           groups.filter(
             group =>
-              group !== channel.group
+              group.id !== channel.groupId
           );
         const targetGroup =
           targetGroups[channel.id] || "";
@@ -267,7 +267,7 @@ export default function ChannelList({
                   cursor: "pointer"
                 }}
               >
-                {channel.url}
+                {channel.url} - {(groups.find(g => g.id === channel.groupId)?.name || 'Без группы')}
               </button>
             </div>
 
@@ -299,10 +299,10 @@ export default function ChannelList({
                 {availableGroups.map(
                   group => (
                     <option
-                      key={group}
-                      value={group}
+                      key={group.id}
+                      value={group.id}
                     >
-                      {group}
+                      {group.name}
                     </option>
                   )
                 )}

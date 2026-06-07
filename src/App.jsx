@@ -31,17 +31,19 @@ function App() {
     content,
     loadedFileName
   ) => {
-    const loadedChannels =
+    const playlist =
       parseM3U(content);
+    console.log(playlist);
+    setChannels(playlist.channels);
+    setGroups(playlist.groups);
 
-    setChannels(loadedChannels);
-    setGroups([
-      ...new Set(
-        loadedChannels.map(
-          channel => channel.group || ""
-        )
-      )
-    ]);
+    // setGroups([
+    //   ...new Set(
+    //     loadedChannels.map(
+    //       channel => channel.group || ""
+    //     )
+    //   )
+    // ]);
     setFileName(
       loadedFileName || "playlist.m3u8"
     );
@@ -49,34 +51,39 @@ function App() {
 
   // Добавляет новую группу, если группы с таким именем ещё нет.
   const handleCreateGroup = groupName => {
-    setGroups(currentGroups =>
-      currentGroups.includes(groupName)
-        ? currentGroups
-        : [...currentGroups, groupName]
-    );
+    setGroups(currentGroups => {
+      if (
+        currentGroups.some(
+          group => group.name === groupName
+        )
+      ) {
+        return currentGroups;
+      }
+
+      return [
+        ...currentGroups,
+        {
+          id: crypto.randomUUID(),
+          name: groupName,
+          parentId: null
+        }
+      ];
+    });
   };
 
-  // Переименовывает группу и обновляет имя группы у всех её каналов.
+  // Переименовывает группу по её идентификатору.
   const handleRenameGroup = (
-    currentName,
+    groupId,
     newName
   ) => {
     setGroups(currentGroups =>
       currentGroups.map(group =>
-        group === currentName
-          ? newName
-          : group
-      )
-    );
-    setChannels(currentChannels =>
-      currentChannels.map(channel =>
-        (channel.group || "") ===
-        currentName
+        group.id === groupId
           ? {
-              ...channel,
-              group: newName
+              ...group,
+              name: newName
             }
-          : channel
+          : group
       )
     );
   };
@@ -84,16 +91,17 @@ function App() {
   // Создаёт копию канала в выбранной группе с новым идентификатором.
   const handleCopyChannel = (
     channelId,
-    targetGroup
+    targetGroupId
   ) => {
     setChannels(currentChannels => {
-      const channel = currentChannels.find(
-        item => item.id === channelId
-      );
+      const channel =
+        currentChannels.find(
+          item => item.id === channelId
+        );
 
       if (
         !channel ||
-        channel.group === targetGroup
+        channel.groupId === targetGroupId
       ) {
         return currentChannels;
       }
@@ -103,7 +111,7 @@ function App() {
         {
           ...channel,
           id: crypto.randomUUID(),
-          group: targetGroup
+          groupId: targetGroupId
         }
       ];
     });
@@ -112,14 +120,14 @@ function App() {
   // Перемещает существующий канал в другую группу.
   const handleMoveChannel = (
     channelId,
-    targetGroup
+    targetGroupId
   ) => {
     setChannels(currentChannels =>
       currentChannels.map(channel =>
         channel.id === channelId
           ? {
               ...channel,
-              group: targetGroup
+              groupId: targetGroupId
             }
           : channel
       )
@@ -148,8 +156,8 @@ function App() {
       if (
         !sourceChannel ||
         !targetChannel ||
-        sourceChannel.group !==
-          targetChannel.group
+        sourceChannel.groupId !==
+          targetChannel.groupId
       ) {
         return currentChannels;
       }
@@ -157,8 +165,8 @@ function App() {
       const groupChannels =
         currentChannels.filter(
           channel =>
-            channel.group ===
-            sourceChannel.group
+            channel.groupId ===
+            sourceChannel.groupId
         );
       const sourceIndex =
         groupChannels.findIndex(
@@ -185,13 +193,18 @@ function App() {
       let groupIndex = 0;
 
       return currentChannels.map(channel =>
-        channel.group ===
-        sourceChannel.group
+        channel.groupId ===
+        sourceChannel.groupId
           ? groupChannels[groupIndex++]
           : channel
       );
     });
   };
+
+  // const handleReorderGroup = (
+  //   sourceIndex,
+  //   targetIndex
+  // )
 
   // Удаляет канал из плейлиста по его идентификатору.
   const handleDeleteChannel = (
@@ -208,12 +221,12 @@ function App() {
   const handleDeleteGroup = group => {
     setGroups(currentGroups =>
       currentGroups.filter(
-        item => item !== group
+        item => item.id !== group.id
       )
     );
     setChannels(currentChannels =>
       currentChannels.filter(
-        channel => channel.group !== group
+        channel => channel.groupId !== group.id
       )
     );
   };
