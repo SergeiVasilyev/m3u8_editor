@@ -1,16 +1,32 @@
-# React + Vite
+# M3U8 Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple browser-based M3U/M3U8 playlist editor built with React and Vite.
 
-Currently, two official plugins are available:
+Features
+- Load and parse M3U/M3U8 files (supports #EXTINF and #EXTGRP).
+- View and manage channel groups: create, rename, delete.
+- Drag & drop groups and channels to change order.
+- Copy/move channels between groups.
+- Pagination for long channel lists.
+- Save the playlist with the current group order preserved.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Installation and running
+1. Install dependencies:
+   npm install
+2. Start the dev server:
+   npm run dev
+3. Build for production:
+   npm run build
 
-## React Compiler
+Usage
+1. Click "Load" and select an M3U/M3U8 file.
+2. Edit groups and channels in the left/right panes.
+3. Drag groups/channels to reorder them.
+4. Click "Save M3U8" — the downloaded file will reflect the current ordering.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Technical details
+- Parser/unparser: src/parser/m3u_parser.jsx
+- Channel/group models: src/models
+- UI components: src/components (GroupList, ChannelList, PlaylistView, etc.)
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
