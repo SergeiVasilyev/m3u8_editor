@@ -8,7 +8,8 @@ export default function GroupList({
   onCreateGroup,
   onRenameGroup,
   onSelectGroup,
-  onDeleteGroup
+  onDeleteGroup,
+  onReorderGroup
 }) {
   const [groupName, setGroupName] =
     useState("");
@@ -20,6 +21,35 @@ export default function GroupList({
     editingName,
     setEditingName
   ] = useState("");
+
+  const [
+    draggedGroupId,
+    setDraggedGroupId
+  ] = useState(null);
+  const [
+    dragTargetGroupId,
+    setDragTargetGroupId
+  ] = useState(null);
+
+  const startDraggingGroup = (event, groupId) => {
+    setDraggedGroupId(groupId);
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", groupId);
+  };
+
+  const dropGroup = (event, targetId) => {
+    event.preventDefault();
+
+    const sourceId =
+      draggedGroupId || event.dataTransfer.getData("text/plain");
+
+    if (sourceId && onReorderGroup) {
+      onReorderGroup(sourceId, targetId);
+    }
+
+    setDraggedGroupId(null);
+    setDragTargetGroupId(null);
+  };
 
   // Отправляет введённое имя для создания новой группы.
   const createGroup = event => {
@@ -108,6 +138,27 @@ export default function GroupList({
         return (
           <div
             key={group.id}
+            draggable
+            onDragStart={event =>
+              startDraggingGroup(event, group.id)
+            }
+            onDragOver={event => {
+              event.preventDefault();
+              event.dataTransfer.dropEffect = "move";
+              setDragTargetGroupId(group.id);
+            }}
+            onDragLeave={() =>
+              setDragTargetGroupId(current =>
+                current === group.id ? null : current
+              )
+            }
+            onDrop={event =>
+              dropGroup(event, group.id)
+            }
+            onDragEnd={() => {
+              setDraggedGroupId(null);
+              setDragTargetGroupId(null);
+            }}
             onClick={() =>
               onSelectGroup(group)
             }
@@ -119,7 +170,15 @@ export default function GroupList({
               background:
                 selectedGroup?.id === group.id
                   ? "#dbeafe"
-                  : "transparent"
+                  : "transparent",
+              borderTop:
+                dragTargetGroupId === group.id
+                  ? "2px solid #3b82f6"
+                  : "2px solid transparent",
+              opacity:
+                draggedGroupId === group.id
+                  ? 0.5
+                  : 1
             }}
           >
             {isEditing ? (

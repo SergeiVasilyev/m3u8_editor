@@ -17,7 +17,8 @@ export default function PlaylistView({
   onMoveChannel,
   onReorderChannel,
   onDeleteChannel,
-  onDeleteGroup
+  onDeleteGroup,
+  onReorderGroup
 }) {
   const {
     channelsByGroup,
@@ -144,6 +145,7 @@ export default function PlaylistView({
           onRenameGroup={handleRenameGroup}
           onSelectGroup={setSelectedGroup}
           onDeleteGroup={handleDeleteGroup}
+          onReorderGroup={onReorderGroup}
         />
       </div>
 

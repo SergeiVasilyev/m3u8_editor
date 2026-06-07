@@ -201,10 +201,22 @@ function App() {
     });
   };
 
-  // const handleReorderGroup = (
-  //   sourceIndex,
-  //   targetIndex
-  // )
+  const handleReorderGroup = (sourceId, targetId) => {
+    if (sourceId === targetId) return;
+
+    setGroups(currentGroups => {
+      const sourceIndex = currentGroups.findIndex(g => g.id === sourceId);
+      const targetIndex = currentGroups.findIndex(g => g.id === targetId);
+
+      if (sourceIndex === -1 || targetIndex === -1) return currentGroups;
+
+      const newGroups = [...currentGroups];
+      const [moved] = newGroups.splice(sourceIndex, 1);
+      newGroups.splice(targetIndex, 0, moved);
+
+      return newGroups;
+    });
+  };
 
   // Удаляет канал из плейлиста по его идентификатору.
   const handleDeleteChannel = (
@@ -303,6 +315,9 @@ function App() {
             }
             onDeleteGroup={
               handleDeleteGroup
+            }
+            onReorderGroup={
+              handleReorderGroup
             }
           />
         </>
